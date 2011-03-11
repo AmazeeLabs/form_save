@@ -1,0 +1,88 @@
+<?php
+
+/**
+ *
+ * This module allows users to submit forms using Ctrl+S or Cmd+S.
+ *
+ */
+
+/**
+ * Implements hook_help().
+ */
+function form_save_help($section) {
+  switch ($section) {
+    case 'admin/config/front':
+      return t('<p>Setup custom front pages for your site.</p>');
+  }
+}
+
+/**
+ * Implements hook_permission().
+ */
+function form_save_permission() {
+  return array(
+    'administer form save' => array(
+      'title' => t('Administer Form Save'),
+      'description' => t('Allow users to make changes to the form save settings.'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function form_save_menu() {
+// Front page settings.
+  $items['admin/config/content/form_save'] = array(
+    'title' => 'Form Save',
+    'description' => 'Allow users to save their forms using Ctrl+S, Cmd+S or a user configured key combination.',
+    'weight' => 1,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('form_save_admin'),
+    'access arguments' => array('administer form save'),
+    'file' => 'form_save.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_form_alter - find default button by iterating through all form items
+ */
+function form_save_form_alter(&$form, $form_state, $form_id) {
+  if (variable_get('form_save_enable', 0)) {
+    $buttons = array();
+    if (form_save_find_default_button($form, $buttons)) {
+      drupal_add_js(array('form_save' => array('enabled' => TRUE)), 'setting');
+      drupal_add_js(drupal_get_path('module', 'form_save') . '/form_save.js');
+    }
+    else {
+      foreach ($buttons as &$button) {
+        if (!isset($button['#deafult_button'])) {
+          $button['#attributes']['class'][] = 'form-save-default-button';
+          drupal_add_js(array('form_save' => array('enabled' => TRUE)), 'setting');
+          drupal_add_js(drupal_get_path('module', 'form_save') . '/form_save.js');
+          break;
+        }
+      }
+    }
+  }
+}
+
+function form_save_find_default_button(&$element, &$buttons) {
+  if (isset($element['#type']) && $element['#type'] == 'submit') {
+    if (isset($element['#default_button']) && $element['#default_button'] === TRUE) {
+      $element['#attributes']['class'] .= ' form-save-default-button';
+      return TRUE;
+    }
+    else {
+      $buttons[] = & $element;
+    }
+  }
+
+  foreach (element_children($element) as $key) {
+    if (form_save_find_default_button($element[$key], $buttons)) {
+      return TRUE;
+    }
+  }
+  return FALSE;
+}

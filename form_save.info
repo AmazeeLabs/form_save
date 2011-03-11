@@ -1,0 +1,4 @@
+name = From Save
+description = Allows users to save their forms using Ctrl+S or Cmd+S.
+package = Other
+core = 7.x
