@@ -41,19 +41,19 @@
 
         $(document).keydown(function(event){
           // if Ctrl or Cmd
-          if(event.keyCode == 17 || event.keyCode == 224){
+          if(event.which == 17 || event.which == 91){
             Drupal.form_save.controlDown = true;
           }
 
           // if key is s and ctrl or cmd is currently in down state then
           // submit form with click of default button.
-          if(Drupal.form_save.currentForm && Drupal.form_save.controlDown && event.keyCode == 83) {
+          if(Drupal.form_save.currentForm && Drupal.form_save.controlDown && event.which == 83) {
             $('input.form-save-default-button', Drupal.form_save.currentForm).click();
             return false;
           }
         }).keyup(function(event){
           // remove ctrl or cmd
-          if(event.keyCode == 17 || event.keyCode == 224){
+          if(event.which == 17 || event.which == 91){
             Drupal.form_save.controlDown = false;
           }
         });

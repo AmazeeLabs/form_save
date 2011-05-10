@@ -1,6 +1,8 @@
 <?php
 
 /**
+ * @file
+ * Form Save Module
  *
  * This module allows users to submit forms using Ctrl+S or Cmd+S.
  *
@@ -17,19 +19,9 @@ function form_save_help($section) {
 }
 
 /**
- * Implements hook_permission().
- */
-function form_save_permission() {
-  return array(
-    'administer form save' => array(
-      'title' => t('Administer Form Save'),
-      'description' => t('Allow users to make changes to the form save settings.'),
-    ),
-  );
-}
-
-/**
- * Implements hook_form_alter - find default button by iterating through all form items
+ * Implements hook_form_alter().
+ *
+ * Find default button by iterating through all form items.
  */
 function form_save_form_alter(&$form, $form_state, $form_id) {
   $buttons = array();
@@ -49,6 +41,20 @@ function form_save_form_alter(&$form, $form_state, $form_id) {
   }
 }
 
+/**
+ * Function checks if form element is of type submit and whether or not
+ * it has been set as the default button of the form. It then runs the
+ * function recursive on any children of the current element.
+ *
+ * @param string $element
+ *    The current element being checked.
+ * @param string $buttons
+ *    A variable that buttons can be added to as it is passed by reference.
+ *
+ * @return type
+ *    Returns TRUE if the element is the default button or one of
+ *    it's children is the default button.
+ */
 function form_save_find_default_button(&$element, &$buttons) {
   if (isset($element['#type']) && $element['#type'] == 'submit') {
     if (isset($element['#default_button']) && $element['#default_button'] === TRUE) {
