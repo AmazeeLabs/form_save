@@ -24,3 +24,10 @@ Usage
 -----
 
 Whilst on a form on the site press either Ctrl+S or Cmd+S to save the form.
+
+
+Bugs, Features and Support
+--------------------------
+
+For all bugs, feature requests or support requests please use the 
+Form Save issue queue at http://drupal.org/project/issues/form_save
