@@ -2,21 +2,11 @@
 
 /**
  * @file
- * Form Save Module
+ * Form save module
  *
  * This module allows users to submit forms using Ctrl+S or Cmd+S.
  *
  */
-
-/**
- * Implements hook_help().
- */
-function form_save_help($section) {
-  switch ($section) {
-    case 'admin/config/front':
-      return t('<p>Setup custom front pages for your site.</p>');
-  }
-}
 
 /**
  * Implements hook_form_alter().
@@ -25,13 +15,13 @@ function form_save_help($section) {
  */
 function form_save_form_alter(&$form, $form_state, $form_id) {
   $buttons = array();
-  if (form_save_find_default_button($form, $buttons)) {
+  if (_form_save_find_default_button($form, $buttons)) {
     drupal_add_js(array('form_save' => array('enabled' => TRUE)), 'setting');
     drupal_add_js(drupal_get_path('module', 'form_save') . '/form_save.js');
   }
   else {
     foreach ($buttons as &$button) {
-      if (!isset($button['#deafult_button'])) {
+      if (!isset($button['#default_button'])) {
         $button['#attributes']['class'][] = 'form-save-default-button';
         drupal_add_js(array('form_save' => array('enabled' => TRUE)), 'setting');
         drupal_add_js(drupal_get_path('module', 'form_save') . '/form_save.js');
@@ -55,10 +45,10 @@ function form_save_form_alter(&$form, $form_state, $form_id) {
  *    Returns TRUE if the element is the default button or one of
  *    it's children is the default button.
  */
-function form_save_find_default_button(&$element, &$buttons) {
+function _form_save_find_default_button(&$element, &$buttons) {
   if (isset($element['#type']) && $element['#type'] == 'submit') {
     if (isset($element['#default_button']) && $element['#default_button'] === TRUE) {
-      $element['#attributes']['class'] .= ' form-save-default-button';
+      $element['#attributes']['class'][] = 'form-save-default-button';
       return TRUE;
     }
     else {
@@ -67,7 +57,7 @@ function form_save_find_default_button(&$element, &$buttons) {
   }
 
   foreach (element_children($element) as $key) {
-    if (form_save_find_default_button($element[$key], $buttons)) {
+    if (_form_save_find_default_button($element[$key], $buttons)) {
       return TRUE;
     }
   }
