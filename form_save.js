@@ -6,6 +6,33 @@
   Drupal.form_save.clickBubble = false;
 
   /**
+   * Key-down handler for document(s);
+   */
+  Drupal.form_save.documentKeyDownHandler = function(event) {
+    // if Ctrl or Cmd
+    if(event.which == 17 || event.which == 91){
+      Drupal.form_save.controlDown = true;
+    }
+
+    // if key is s and ctrl or cmd is currently in down state then
+    // submit form with click of default button.
+    if(Drupal.form_save.currentForm && Drupal.form_save.controlDown && event.which == 83) {
+      $('input.form-save-default-button', Drupal.form_save.currentForm).click();
+      return false;
+    }
+  };
+
+  /**
+   * Key-up handler for document(s);
+   */
+  Drupal.form_save.documentKeyUpHandler = function(event) {
+    // remove ctrl or cmd
+    if(event.which == 17 || event.which == 91){
+      Drupal.form_save.controlDown = false;
+    }
+  };
+
+  /**
    * Collapse modules on Permissions page.
    */
   Drupal.behaviors.formSave = {
@@ -39,24 +66,20 @@
           }
         });
 
-        $(document).keydown(function(event){
-          // if Ctrl or Cmd
-          if(event.which == 17 || event.which == 91){
-            Drupal.form_save.controlDown = true;
-          }
+        $(document).keydown(Drupal.form_save.documentKeyDownHandler).keyup(Drupal.form_save.documentKeyDownHandler);
 
-          // if key is s and ctrl or cmd is currently in down state then
-          // submit form with click of default button.
-          if(Drupal.form_save.currentForm && Drupal.form_save.controlDown && event.which == 83) {
-            $('input.form-save-default-button', Drupal.form_save.currentForm).click();
-            return false;
-          }
-        }).keyup(function(event){
-          // remove ctrl or cmd
-          if(event.which == 17 || event.which == 91){
-            Drupal.form_save.controlDown = false;
-          }
-        });
+        // CKEditor support.
+        if (typeof(CKEDITOR) != 'undefined' && CKEDITOR.on) {
+          CKEDITOR.on('instanceReady', function(e) {
+            $(e.editor.document.$)
+              .keydown(Drupal.form_save.documentKeyDownHandler)
+              .keyup(Drupal.form_save.documentKeyDownHandler)
+              .click(function() {
+                var $form = $(parent.document.activeElement).closest('form');
+                Drupal.form_save.currentForm = $form.size() ? $form[0] : null;
+              });
+          });
+        }
       }
     }
   };
