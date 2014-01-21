@@ -66,14 +66,14 @@
           }
         });
 
-        $(document).keydown(Drupal.form_save.documentKeyDownHandler).keyup(Drupal.form_save.documentKeyDownHandler);
+        $(document).keydown(Drupal.form_save.documentKeyDownHandler).keyup(Drupal.form_save.documentKeyUpHandler);
 
         // CKEditor support.
         if (typeof(CKEDITOR) != 'undefined' && CKEDITOR.on) {
           CKEDITOR.on('instanceReady', function(e) {
             $(e.editor.document.$)
               .keydown(Drupal.form_save.documentKeyDownHandler)
-              .keyup(Drupal.form_save.documentKeyDownHandler)
+              .keyup(Drupal.form_save.documentKeyUpHandler)
               .click(function() {
                 var $form = $(parent.document.activeElement).closest('form');
                 Drupal.form_save.currentForm = $form.size() ? $form[0] : null;
