@@ -59,12 +59,18 @@
           }
         });
 
+        /*
+
+        Since we need this module only for Ctrl+S handling: disable Enter button
+        handling, because it breaks ajax view exposed form submission.
+
         // fix enter submission of form via textfield to make sure it clicks default button
         $('form input[type=text]').keydown(function(event) {
           if (event.keyCode == 13) {
             $(this).parents('form').find('input.form-save-default-button').click();
           }
         });
+        */
 
         $(document).keydown(Drupal.form_save.documentKeyDownHandler).keyup(Drupal.form_save.documentKeyUpHandler);
 
